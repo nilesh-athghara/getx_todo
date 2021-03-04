@@ -1,41 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:todo_getx/data/adapters/task_adapter.dart';
 import 'package:todo_getx/data/entity/task_model.dart';
 import 'package:todo_getx/screens/task_screen/task_screen.dart';
+import 'package:todo_getx/utilities/device_info.dart';
 
 //this class contains all the variables and ui logic related to main screen
 class MainScreenController extends GetxController {
-  RxList<Todo> tasks = <Todo>[].obs;
+  RxList<Task> tasks = <Task>[].obs;
+  TaskAdapter taskAdapter = TaskAdapter();
+  RxBool loading = true.obs;
+  String deviceId;
 
   @override
   void onInit() {
     super.onInit();
-    //check if a list is already stored
-    List stored = GetStorage().read<List>("tasks");
-    if (stored != null) {
-      tasks = RxList(stored.map((e) => Todo.fromJson(e)).toList());
-    }
-    //"ever" means will be called every time task list changes
-    ever(tasks, (_) => {GetStorage().write("tasks", tasks.toList())});
+    init();
   }
 
-  add(String val) => tasks.add(Todo(text: val));
+  init() async {
+    //load stored data
+    deviceId = await DeviceInfo.getDeviceId();
+    List<Task> list = await taskAdapter.loadTasks(uniqueId: deviceId);
+    tasks.addAll(list);
+    //hide loader
+    loading.value = false;
+  }
 
-  updateText(String val, int index) {
-    Todo toChange = tasks[index];
-    toChange.text = val;
-    tasks[index] = toChange;
+  add(String val) async {
+    Task task = await taskAdapter.addTask(text: val, deviceId: deviceId);
+    if (task != null) tasks.add(task);
+  }
+
+  updateText(String val, int index) async {
+    Task changed = await taskAdapter.updateTask(text: val, id: tasks[index].id);
+    if (changed != null) tasks[index] = changed;
   }
 
   updateStatus(bool val, int index) {
-    Todo toChange = tasks[index];
+    Task toChange = tasks[index];
     toChange.completed = val;
     tasks[index] = toChange;
   }
 
   remove(int index) {
-    Todo task = tasks[index];
+    Task task = tasks[index];
     tasks.removeAt(index);
     Get.snackbar("Task Removed", "",
         mainButton: FlatButton(

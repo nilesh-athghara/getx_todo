@@ -19,15 +19,18 @@ class MainScreen extends StatelessWidget {
             onPressed: () {
               mainScreenController.gotoTaskScreen();
             }),
-        body: Container(
-          child: Obx(() => ListView.separated(
-              itemBuilder: (context, index) {
-                return MainScreenTile(index: index);
-              },
-              separatorBuilder: (context, index) {
-                return Divider();
-              },
-              itemCount: mainScreenController.tasks.length)),
-        ));
+        body: Obx(() => mainScreenController.loading.value
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container(
+                child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      return MainScreenTile(index: index);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                    itemCount: mainScreenController.tasks.length))));
   }
 }
