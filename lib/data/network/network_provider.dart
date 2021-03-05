@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class NetworkProvider {
   Dio _dio;
@@ -65,6 +64,42 @@ class NetworkProvider {
     try {
       response =
           await _dio.put(path, queryParameters: queryParameters, data: data);
+    } on DioError catch (e) {
+      print(e.message);
+      throw Exception(e.message);
+    }
+    return response;
+  }
+
+  Future<Response> patch(
+      {@required String path,
+      Map<String, dynamic> queryParameters = const {},
+      Map<String, dynamic> data}) async {
+    Response response;
+    try {
+      response = await _dio.patch(
+        path,
+        queryParameters: queryParameters,
+        data: data,
+      );
+    } on DioError catch (e) {
+      print(e.message);
+      throw Exception(e.message);
+    }
+    return response;
+  }
+
+  Future<Response> delete(
+      {@required String path,
+      Map<String, dynamic> queryParameters = const {},
+      Map<String, dynamic> data}) async {
+    Response response;
+    try {
+      response = await _dio.delete(
+        path,
+        queryParameters: queryParameters,
+        data: data,
+      );
     } on DioError catch (e) {
       print(e.message);
       throw Exception(e.message);

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:todo_getx/constants/url_constants.dart';
 import 'package:todo_getx/data/entity/task_model.dart';
 import 'package:todo_getx/data/network/network_provider.dart';
@@ -24,10 +24,10 @@ class TaskAdapter {
   }
 
   Future<Task> addTask(
-      {@required String text, @required String deviceId}) async {
+      {@required String text, @required String uniqueId}) async {
     Task task;
     Response response = await _networkProvider
-        .post(path: "/save", data: {"text": text, "uid": deviceId});
+        .post(path: "/save", data: {"text": text, "uid": uniqueId});
     if (response.statusCode == 200) {
       task = taskFromJson(response.data["task"]);
     }
@@ -42,5 +42,24 @@ class TaskAdapter {
       task = taskFromJson(response.data["task"]);
     }
     return task;
+  }
+
+  Future<bool> toggleComplete({@required bool val, @required String id}) async {
+    bool updated = false;
+    Response response = await _networkProvider.put(
+        path: "/toggle_complete",
+        data: {"completed": val},
+        queryParameters: {"id": id});
+    if (response.statusCode == 200) updated = true;
+    return updated;
+  }
+
+  Future<bool> delete({@required String id}) async {
+    bool deleted = false;
+    Response response = await _networkProvider.delete(
+        path: "/delete",
+        queryParameters: {"id": id});
+    if (response.statusCode == 200) deleted = true;
+    return deleted;
   }
 }

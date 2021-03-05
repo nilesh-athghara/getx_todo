@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_getx/data/adapters/task_adapter.dart';
 import 'package:todo_getx/data/entity/task_model.dart';
@@ -28,7 +27,7 @@ class MainScreenController extends GetxController {
   }
 
   add(String val) async {
-    Task task = await taskAdapter.addTask(text: val, deviceId: deviceId);
+    Task task = await taskAdapter.addTask(text: val, uniqueId: deviceId);
     if (task != null) tasks.add(task);
   }
 
@@ -37,24 +36,23 @@ class MainScreenController extends GetxController {
     if (changed != null) tasks[index] = changed;
   }
 
-  updateStatus(bool val, int index) {
+  updateStatus(bool val, int index) async {
     Task toChange = tasks[index];
     toChange.completed = val;
     tasks[index] = toChange;
+    bool updated = await taskAdapter.toggleComplete(val: val, id: toChange.id);
+    if (!updated) {
+      toChange.completed = !val;
+      tasks[index] = toChange;
+    }
   }
 
-  remove(int index) {
-    Task task = tasks[index];
-    tasks.removeAt(index);
-    Get.snackbar("Task Removed", "",
-        mainButton: FlatButton(
-            onPressed: () {
-              if (task != null) {
-                tasks.insert(index, task);
-                task = null;
-              }
-            },
-            child: Text("Undo")));
+  remove(int index) async {
+    bool deleted = await taskAdapter.delete(id: tasks[index].id);
+    if (deleted) {
+      tasks.removeAt(index);
+      Get.snackbar("Task Removed", "");
+    }
   }
 
   //navigations
