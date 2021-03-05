@@ -5,27 +5,26 @@ import 'package:todo_getx/controllers/main_screen_controller.dart';
 
 class TaskScreenController extends GetxController {
   TextEditingController textEditingController = TextEditingController();
-  MainScreenController mainScreenController = Get.find<MainScreenController>();
-  List arguments = Get.arguments;
+  final MainScreenController mainScreenController = Get.find();
+  int index = Get.arguments;
 
   @override
   void onInit() {
     super.onInit();
-    if (arguments[0] != null) {
-      textEditingController.text =
-          mainScreenController.tasks[arguments[0]].text;
+    if (index != null) {
+      textEditingController.text = mainScreenController.tasks[index].text;
     }
   }
 
-  getRightButtonLabel() => arguments[0] == null
+  getRightButtonLabel() => index == null
       ? StringConstants.taskScreenAdd
       : StringConstants.taskScreenUpdate;
 
   getRightButtonOnClick() {
-    if (arguments[0] == null) {
+    if (index == null) {
       mainScreenController.add(textEditingController.text);
     } else {
-      mainScreenController.updateText(textEditingController.text, arguments[0]);
+      mainScreenController.updateText(textEditingController.text, index);
     }
     Get.back();
   }

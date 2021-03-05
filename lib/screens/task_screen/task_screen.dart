@@ -8,10 +8,8 @@ import 'package:todo_getx/controllers/task_screen_controllers.dart';
 import 'package:todo_getx/screens/task_screen/text_field.dart';
 
 class TaskScreen extends StatelessWidget {
-  final MainScreenController mainScreenController =
-      Get.find<MainScreenController>();
-  final TaskScreenController taskScreenController =
-      Get.put(TaskScreenController());
+  final MainScreenController mainScreenController = Get.find();
+  final TaskScreenController taskScreenController = Get.find();
 
   @override
   Widget build(BuildContext context) {

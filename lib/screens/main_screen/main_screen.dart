@@ -6,7 +6,7 @@ import 'package:todo_getx/screens/main_screen/main_screen_tile.dart';
 
 class MainScreen extends StatelessWidget {
   final MainScreenController mainScreenController =
-      Get.put(MainScreenController());
+      Get.find<MainScreenController>();
 
   @override
   Widget build(BuildContext context) {

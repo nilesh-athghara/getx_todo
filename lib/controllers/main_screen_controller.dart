@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:todo_getx/bindings/task_screen_binding.dart';
 import 'package:todo_getx/data/adapters/task_adapter.dart';
 import 'package:todo_getx/data/entity/task_model.dart';
 import 'package:todo_getx/screens/task_screen/task_screen.dart';
@@ -56,5 +57,6 @@ class MainScreenController extends GetxController {
   }
 
   //navigations
-  gotoTaskScreen({int index}) => Get.to(() => TaskScreen(), arguments: [index]);
+  gotoTaskScreen({int index}) => Get.to(() => TaskScreen(),
+      arguments: index, binding: TaskScreenBinding());
 }
